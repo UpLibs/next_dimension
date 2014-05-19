@@ -18,6 +18,13 @@ class Trigonometry {
           ) ;
   }
   
+  static Vector2 dimension(num x, num y) {
+      return new Vector2(
+          x.toDouble() ,
+          y.toDouble()
+          ) ;
+  }
+    
   static double abs(double a) {
     return a >= 0 ? a : -a ;
   }

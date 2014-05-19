@@ -9,7 +9,7 @@ dependencies:
   
   three:
     ##git: https://github.com/threeDart/three.dart.git
-    path: ../three.dart-master
+    path: ../three_dart_fork_simplify
   stats:
     git: https://github.com/financeCoding/stats.dart.git
     
