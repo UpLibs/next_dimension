@@ -53,7 +53,7 @@ class NDNodeSpace extends NDNode {
       
       if (dim == null) {
         num w = NDNode.toDimenstion( NDNode._getElementWidth(e) , this._width) ;
-        num h = NDNode.toDimenstion( NDNode._getElementWidth(e) , this._height) ;
+        num h = NDNode.toDimenstion( NDNode._getElementHeight(e) , this._height) ;
         
         dim = new Vector2(w,h) ;
         
@@ -63,6 +63,10 @@ class NDNodeSpace extends NDNode {
         else {
           _elementsDimensions.add(dim) ;
         }
+      }
+      else {
+        if (dim.x == -1) dim.x = NDNode.toDimenstion( NDNode._getElementWidth(e) , this._width) ;
+        if (dim.y == -1) dim.y = NDNode.toDimenstion( NDNode._getElementHeight(e) , this._height) ;
       }
       
       if (rot == null) {

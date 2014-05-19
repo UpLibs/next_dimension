@@ -30,7 +30,7 @@ packages:
     version: "0.1.2"
   three:
     description:
-      path: "../three.dart-master"
+      path: "../three_dart_fork_simplify"
       relative: true
     source: path
     version: "0.2.5+1"
