@@ -215,8 +215,18 @@ class NDNodeCube extends NDNode {
       Element panel = new Element.div() ;
       panel.children.add( elem ) ;
       
-      panel.style.width = this.widthFormated ;
-      panel.style.height = this.heightFormated ;
+      if ( i == 0 || i == 5 ) {
+        panel.style.width = this.widthFormated ;
+        panel.style.height = this.heightFormated ;  
+      }
+      else if ( i == 1 || i == 2 ) {
+        panel.style.width = this.depthFormated ;
+        panel.style.height = this.heightFormated ;
+      }
+      else if ( i == 3 || i == 4 ) {
+        panel.style.width = this.widthFormated ;
+        panel.style.height = this.depthFormated ; 
+      }
       
       panels.add(panel) ;
     }
@@ -297,19 +307,29 @@ class NDNodeCube extends NDNode {
   }
   
   void showAllFaces() {
-    _content.forEach( (c) => c.style.display = null ) ;
+    _content.forEach( (c) {
+      // face.style.display = null ;
+      c.style.visibility = 'visible' ;
+    }) ;
   }
   
   void hideFace(int faceIndex) {
-    _content[faceIndex].style.display = 'none' ;
+    var face = _content[faceIndex] ;
+    //face.style.display = 'none' ;
+    face.style.visibility = 'hidden' ;
   }
   
   void hideOtherFaces(int faceToNotHideIndex) {
     
-    var face = _content[faceToNotHideIndex] ;
+    for (int i = 0 ; i < _content.length ; i++) {
+      if (i == faceToNotHideIndex) continue ;
+      
+      var c = _content[i] ;
+      
+      //c.style.display = 'none' ;
+      c.style.visibility = 'hidden' ;
+    }
     
-    _content.where( (c) => c != face ).forEach( (c) => c.style.display = 'none' ) ;
-
   }
   
 }
@@ -477,7 +497,7 @@ abstract class NDNode {
   
   void clearShadow() => _content.forEach( (e) => e.style.boxShadow = null ) ; 
   
-  void setShadow( int size , int x, int y, [ double alpha = 1.0, int r = 0, int g = 0, int b = 0 ] ) {
+  void setShadow( int size , [ int x = 0 , int y = 0, double alpha = 1.0, int r = 0, int g = 0, int b = 0 ] ) {
     _content.forEach( (e) => e.style.boxShadow = ' ${x}px ${y}px ${ size }px rgba($r,$g,$b,$alpha) ' ) ;
   }
   
@@ -573,6 +593,75 @@ abstract class NDNode {
     
     this._nd._loockAtNode(this, distance: distance, duration: duration) ;
     
+  }
+  
+  StreamController<NDNode> _controller_onShow = new StreamController<NDNode>() ;
+  Stream<NDNode> get onShow => _controller_onShow.stream ;
+  
+  void _notifyOnShow() {
+    _controller_onShow.add(this) ;
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////////////////
+  
+  List<Element> _contentHeaders ;
+  
+  void _initContentHeaders() {
+    if (_contentHeaders == null) _contentHeaders = [] ;
+    while ( _contentHeaders.length < _content.length ) {
+      _contentHeaders.add(null) ;
+    }
+  }
+  
+  void addContentHeader(Element elem, [bool floatingPosition = true , int contentIndex = 0 , int left = 0, int top = 0]) {
+    _initContentHeaders() ;
+    
+    removeContentHeader(contentIndex) ;
+    
+    _contentHeaders[contentIndex] = elem ;
+    
+    if (floatingPosition) elem.style.position = 'absolute' ; 
+    
+    elem.style
+    ..left = '${left}px'
+    ..top = '${top}px'
+    ;
+
+    Element cont = _content[contentIndex] ;
+    
+    cont.children.insert(0, elem) ;
+  }
+  
+  void removeContentHeader([int contentIndex = 0]) {
+    if (_contentHeaders == null) return ;
+      
+    var prev = _contentHeaders[contentIndex] ;
+    
+    if (prev != null) {
+      _content[contentIndex].children.remove(prev) ;
+    }
+    
+    _contentHeaders[contentIndex] = null ; 
+  }
+  
+  void hideContentHeader([int contentIndex = 0]) {
+    if (_contentHeaders == null) return ;
+          
+    var header = _contentHeaders[contentIndex] ;
+    
+    if (header != null) {
+      header.style.display = 'none';
+    }
+  }
+  
+  void showContentHeader([int contentIndex = 0]) {
+    if (_contentHeaders == null) return ;
+          
+    var header = _contentHeaders[contentIndex] ;
+    
+    if (header != null) {
+      header.style.display = null ;
+    }
   }
   
 }
@@ -804,10 +893,24 @@ class _Object3DGroup {
       } 
     }
     
+    _currentScene = scene ;
+    
     for ( THREE.CSS3DObject obj in _objs ) {
       scene.add(obj) ;
     }
     
+  }
+  
+  void removeFromScene() {
+    if ( _currentScene != null ) {
+          
+      for ( THREE.CSS3DObject obj in _objs ) {
+        
+        _currentScene.remove(obj) ;
+      }
+      
+      _currentScene = null ;
+    }
   }
   
 }

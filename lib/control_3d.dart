@@ -129,6 +129,11 @@ class Control3D {
     if (rotationZ != null) _eyeRotation.z = rotationZ ;
   }
   
+  void cameraLookAt(Vector3 target) {
+    _camera.lookAt(target);
+    setTarget(target) ;
+  }
+  
   void cameraZoom(double scale) {
     if (scale > 0 && scale != 1.0) {
       _eye.scale(scale) ;

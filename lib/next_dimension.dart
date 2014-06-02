@@ -1,6 +1,7 @@
 library next_dimension;
 
 import 'dart:html' ;
+import 'dart:async' ;
 import 'dart:collection' ;
 import "dart:math" as Math;
 
@@ -197,6 +198,23 @@ class ND {
     
     render() ;
   }
+ 
+  Vector3 getNodeCameraPosition(NDNode node , [ double distance ]) {
+     NDGroup group = node._group ;
+     
+     group.autoUpdateLayout() ;
+     
+     _Object3DGroup obj = node.getObject3D() ;
+     
+     Vector3 pos = obj.position ;
+     
+     if (distance == null) distance = group.cameraDistance ;
+     
+     double camDist = distance - node.cameraZoom.toDouble() ;
+     
+     return new Vector3(pos.x, pos.y, pos.z + camDist) ;
+   }
+   
   
   void _loockAtNode(NDNode node , {num duration: 1000.0 , double distance}) {
     _currentNode = node ;
@@ -220,6 +238,8 @@ class ND {
     _control3d.animateCameraLookAt( obj.position , duration: duration ) ;
     
     render() ;
+
+    node._notifyOnShow() ;
   }
   
   /////////////////////////////////////////////////////////////////////////////

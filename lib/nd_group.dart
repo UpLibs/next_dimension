@@ -20,6 +20,12 @@ class NDGroup {
   LinkedHashMap<String,NDNode> _nodes = new LinkedHashMap<String,NDNode>() ;
   
   void addNode( NDNode node ) {
+    var prev = _nodes[ node.name ] ;
+    
+    if (prev != null && !identical(prev, node)) {
+      throw new StateError('Node already exists with name: ${ node.name }') ;
+    }
+    
     _nodes[ node.name ] = node ;
     
     node._group = this ;
@@ -27,13 +33,38 @@ class NDGroup {
     _autoUpdateLayout = true ;
   }
   
-  NDNode removeNode( String nodeName ) {
-    NDNode node = _nodes.remove(nodeName) ;
+  bool removeNode(NDNode node) {
+    for (var k in _nodes.keys) {
+      var n = _nodes[k] ;
+      
+      if (n == node) {
+        _removeNodeImplem(node) ;
+        return true ;
+      }
+    }
+    
+    return false ;
+  }
+  
+  void _removeNodeImplem(NDNode node) {
+    var prev = _nodes.remove(node.name) ;
+    
+    if ( !identical(prev, node) ) throw new StateError("Can't remove node, not same instance!") ;
     
     node._group = null ;
     
-    _autoUpdateLayout = true ;
+    var obj3d = node.getObject3D() ;
     
+    obj3d.removeFromScene() ;
+    
+    _autoUpdateLayout = true ;
+  }
+  
+  NDNode removeNodeByName( String nodeName ) {
+    NDNode node = _nodes[nodeName] ;
+    if (node == null) return null ;
+    
+    _removeNodeImplem(node) ;
     return node ;
   }
   
@@ -74,6 +105,15 @@ class NDGroup {
     return _nodes[ nodeName ] ;
   }
   
+  bool containsNode(NDNode node) {
+    var prev = _nodes[node.name] ;
+    return prev != null && identical(prev, node) ;
+  }
+  
+  bool containsNodeWithName(String nodeName) {
+    var prev = _nodes[nodeName] ;
+    return prev != null ;
+  }
   
   String get name => _name ;
   NDGroupLayout get layout => _layout ;
@@ -124,11 +164,21 @@ class NDGroupLayoutGrid extends NDGroupLayout {
     
     double maxH = 0.0 ;
     
+    double prevNodeW = 0.0 ;
+    
     for (var n in nodes) {
+      double nW = n.width.toDouble();
+      
+      double wDiff = prevNodeW - nW ;
+      
+      print("wDiff: $wDiff") ;
+      
+      x = x - (wDiff/2) ;
+      
       Vector3 pos = new Vector3(x,y,z) ;
       n.setPoistion(pos) ;
       
-      x += n.width.toDouble() + s ;
+      x += nW + s ;
       
       if ( n.height > maxH ) maxH = n.height.toDouble() ;
       
@@ -137,6 +187,8 @@ class NDGroupLayoutGrid extends NDGroupLayout {
         y += maxH + s ;
         maxH = 0.0 ;
       }
+      
+      prevNodeW = nW ;
     }
     
   }
