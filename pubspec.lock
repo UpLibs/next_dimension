@@ -8,7 +8,7 @@ packages:
   matcher:
     description: matcher
     source: hosted
-    version: "0.10.0"
+    version: "0.10.0+2"
   mock:
     description: mock
     source: hosted
@@ -16,11 +16,11 @@ packages:
   path:
     description: path
     source: hosted
-    version: "1.1.0"
+    version: "1.2.1"
   stack_trace:
     description: stack_trace
     source: hosted
-    version: "0.9.3+1"
+    version: "0.9.3+2"
   stats:
     description:
       ref: null

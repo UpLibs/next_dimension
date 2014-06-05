@@ -293,9 +293,11 @@ class NDNodeCube extends NDNode {
     }
     else if (faceIndex == 3) {
       r = new Vector3( -Math.PI * 0.5 , 0.0 , 0.0 ) ;
+      //r = new Vector3( -0.0 , Math.PI * 0.5 , Math.PI * 0.5 ) ;
     }
     else if (faceIndex == 4) {
       r = new Vector3( Math.PI * 0.5 , 0.0 , 0.0 ) ;
+      //r = new Vector3( 0.0 , -Math.PI * 0.5 , -Math.PI * 0.5 ) ;
     }
     else if (faceIndex == 5) {
       r = new Vector3( 0.0 , Math.PI * 1.0 , 0.0 ) ;
@@ -311,6 +313,11 @@ class NDNodeCube extends NDNode {
       // face.style.display = null ;
       c.style.visibility = 'visible' ;
     }) ;
+  }
+  
+  void showFace(int faceIndex) {
+      var face = _content[faceIndex] ;
+      face.style.visibility = 'visible' ;
   }
   
   void hideFace(int faceIndex) {
